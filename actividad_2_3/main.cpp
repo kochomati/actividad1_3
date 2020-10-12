@@ -60,7 +60,7 @@ void fechasFiltro(std::vector<std::string> listaVector)
 {
     std::string fecha1, fecha2;
     std::cout << "\nEsta base contiene 16,806 registros de intentos fallidos de ingreso al sistema desde 01-Jun hasta 30-Oct.\n";
-    std::cout << "\nPara realizar una búsqueda, por favor ingrese el rango de fechas deseado en formato MM-DD. Por ejemplo, el 10 de Junio se debe escribir como 06-10.\n";
+    std::cout << "\nPara realizar una búsqueda, por favor ingrese el rango de IPs deseado en formato 000.000.000.000:\n";
     std::cout << "Ingrese Fecha (06-01). Desde: ";
     std::cin >> fecha1;
     std::cout << "Ingrese Fecha (10-30). Hasta: ";
