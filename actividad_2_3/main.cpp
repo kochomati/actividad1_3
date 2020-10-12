@@ -38,7 +38,7 @@ void push(Node** head_ref, std::string new_data)  {
 }  
   
 
-// Function to insetail new node  
+// Función para insertar posterior
 void insercionOrdenada(Node **head, Node **tail, std::string key) {  
     Node *p = new Node();  
     p->data = key;  
@@ -86,7 +86,6 @@ void ipsOrdenados(Node *head) {
         head = head->next;  
     }  
     bitacoraOrdenada.close();
-
 }  
 
 // Archivo de ingreso raw - mismo archivo que Act. 1.3 - @TODO: ver de usar mismo orígen
