@@ -17,12 +17,12 @@ Creación: Sábado, 10 de Octubre
 
 // Nodo de una lista doblemente ligada (LDL)
 struct Node { 
-    int data; 
+    std::string data; 
     struct Node* prev, *next; 
 }; 
 
 // Inserta un nuevo nodo al principio de la lista dada una referencia (pointer a pointer) del head y un int
-void push(Node** head_ref, int new_data)  {  
+void push(Node** head_ref, std::string new_data)  {  
     // Ubica nodo
     Node* new_node = new Node();  
     // Ingresa la data
@@ -38,7 +38,7 @@ void push(Node** head_ref, int new_data)  {
 }  
 
 // Crea y devuelve nuevo nodo de LDL 
-struct Node* getNode(int data) { 
+struct Node* getNode(std::string data) { 
     // Ubica Nodo
     struct Node* newNode =  
         (struct Node*)malloc(sizeof(struct Node)); 
@@ -49,7 +49,7 @@ struct Node* getNode(int data) {
 } 
   
 // Inserta nuevo nodo de forma ordenada en LDL
-void sortedInsert(struct Node** head_ref, struct Node* newNode) { 
+void insercionOrdenada(struct Node** head_ref, struct Node* newNode) { 
     struct Node* current; 
     // Si LDL esta vacía
     if (*head_ref == NULL) 
@@ -74,14 +74,68 @@ void sortedInsert(struct Node** head_ref, struct Node* newNode) {
         newNode->prev = current; 
     } 
 } 
+
+// Function to insetail new node  
+void nodeInsetail(Node **head, Node **tail, std::string key)  
+{  
+  
+    Node *p = new Node();  
+    p->data = key;  
+    p->next = NULL;  
+  
+    // If first node to be insetailed in doubly  
+    // linked list  
+    if ((*head) == NULL)  
+    {  
+        (*head) = p;  
+        (*tail) = p;  
+        (*head)->prev = NULL;  
+        return;  
+    }  
+  
+    // If node to be insetailed has value less  
+    // than first node  
+    if ((p->data) < ((*head)->data))  
+    {  
+        p->prev = NULL;  
+        (*head)->prev = p;  
+        p->next = (*head);  
+        (*head) = p;  
+        return;  
+    }  
+  
+    // If node to be insetailed has value more  
+    // than last node  
+    if ((p->data) > ((*tail)->data))  
+    {  
+        p->prev = (*tail);  
+        (*tail)->next = p;  
+        (*tail) = p;  
+        return;  
+    }  
+  
+    // Find the node before which we need to  
+    // insert p.  
+    Node *temp = (*head)->next;  
+    while ((temp->data) < (p->data))  
+        temp = temp->next;  
+  
+    // Insert new node before temp  
+    (temp->prev)->next = p;  
+    p->prev = temp->prev;  
+    temp->prev = p;  
+    p->next = temp;  
+}  
   
 // Función para imprimir la LDL
-void printList(struct Node* head) { 
-    while (head != NULL) { 
-        std::cout << head->data << " "; 
-        head = head->next; 
-    } 
-} 
+void printList(Node *temp)  
+{  
+    while (temp != NULL)  
+    {  
+        std::cout << temp->data << " ";  
+        temp = temp->next;  
+    }  
+}  
 
 // Archivo de ingreso raw - mismo archivo que Act. 1.3 - @TODO: ver de usar mismo orígen
 std::ifstream bitacora("input/bitacora.txt");
@@ -96,35 +150,8 @@ std::string mesTextoANro(const std::string& mes) {
     return "";
 }
 
-// Quicksort recursivo
-void quickSort(std::vector<std::string> &str, int inicio, int fin) {
-    int i = inicio, j = fin;
-    // Variable para asistir en cambio de valores - SWAP
-    std::string buffer;
-    // Valor medio en lista
-    std::string mid = str[(inicio + fin) / 2];
-    while (i <= j) {
-        // Contador desde inicio hacia el centro
-        while (str[i] < mid)
-            i++;
-        // Contador desde el final hacia el centro
-        while (str[j] > mid)
-            j--;
-        // Comparador y cambiador de valores - SWAP
-        if (i <= j) {
-                buffer = str[i];
-                str[i] = str[j];
-                str[j] = buffer;
-                i++; j--;
-        }
-    };
-    // Recursión - función se llama a si misma
-    if (inicio < j) quickSort(str, inicio, j);
-    if (i < fin) quickSort(str, i, fin);
-}
-
-// Solicitud a usuario de rango de fechas para realizar la búsqueda
-void fechasFiltro(std::vector<std::string> listaVector){
+// Solicitud a usuario de rango de IPs para realizar la búsqueda
+void ipsFiltro(struct Node* head){
     std::string ip1, ip2;
     std::cout << "\nEsta base contiene 16,806 registros de intentos fallidos de ingreso al sistema desde 01-Jun hasta 30-Oct y que detalla IPs y puertos origen de requests.\n";
     std::cout << "\nPara realizar una búsqueda, por favor ingrese el rango de IPs deseado en formato 0.0.0.0:0000\n";
@@ -137,24 +164,23 @@ void fechasFiltro(std::vector<std::string> listaVector){
     std::ofstream resultadosBusqueda;
     resultadosBusqueda.open ("output/resultados" + ip1 + "a" + ip2 + ".csv");
     resultadosBusqueda << "ipAddress,dateTime,errorMessage\n";
-    for(int a = 0; a < listaVector.size(); a++){
-        if (listaVector[a] > ip1 && listaVector[a] < ip2 + "z") {
-            resultadosBusqueda << listaVector[a] << "\n"; // Graba en archivo CSV
-            std::cout << listaVector[a] << "\n"; // Imprime en la consola
-        }
-    };
+    while (head != NULL) { 
+        resultadosBusqueda << head->data << "\n";
+        std::cout << head->data << "\n";
+        head = head->next; 
+    } 
     // Mensaje de Confirmación
     std::cout << "\nLos resultados de su búsqueda han sido almacenados en la carpeta output (formato CSV). \n";
 }
 
 int main() {
-    struct Node* head = NULL;
+    Node *head = NULL, *right = NULL;
     std::string line;
     std::ofstream bitacoraOrdenada;
     // Archivo a grabar con datos ordenados
     bitacoraOrdenada.open ("output/bitacora_AZ.csv");
     // Vector de Strings para almacenar lectura de archivo
-    std::vector<std::string> bitacoraVector;
+
     // Ciclo while que lee línea por línea hasta llegar al final
     while (std::getline(bitacora, line)){
         std::istringstream iss(line);
@@ -172,20 +198,22 @@ int main() {
         }
         std::string cleanedLine;
         cleanedLine.append(ip).append(",").append(datetime).append(",").append(message);
+
         // struct Node* new_node = getNode(cleanedLine);
-        bitacoraVector.push_back(cleanedLine);
+        nodeInsetail(&head, &right, cleanedLine);
     };
-    // Llamado función recursiva de ordenamiento
-    quickSort(bitacoraVector, 0, bitacoraVector.size()-1);
-    // Grabado de bitacora ordenada por fecha y hora a archivo CSV
+
+    printList(head);
+
     bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
-    for(int b = 0; b < bitacoraVector.size(); b++){
-        bitacoraOrdenada << bitacoraVector[b] << "\n";
-    };
+    while (head != NULL) { 
+        bitacoraOrdenada << head->data << "\n"; 
+        head = head->next; 
+    } 
     bitacoraOrdenada.close();
 
     // Variables y función para búsqueda
-    fechasFiltro(bitacoraVector);
+    ipsFiltro(head);
 
     return 0;
 }
