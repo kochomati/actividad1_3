@@ -21,23 +21,6 @@ struct Node {
     struct Node* prev, *next; 
 }; 
 
-// Inserta un nuevo nodo al principio de la lista dada una referencia (pointer a pointer) del head y un int
-void push(Node** head_ref, std::string new_data)  {  
-    // Ubica nodo
-    Node* new_node = new Node();  
-    // Ingresa la data
-    new_node->data = new_data;  
-    // Convierte el next de nuevo nodo a head y previo a null
-    new_node->next = (*head_ref);  
-    new_node->prev = NULL;  
-    // Convierte previo de nodo head a nuevo nodo
-    if ((*head_ref) != NULL)  
-        (*head_ref)->prev = new_node;  
-    // Apunta head a nuevo nodo
-    (*head_ref) = new_node;  
-}  
-  
-
 // Función para insertar posterior
 void insercionOrdenada(Node **head, Node **tail, std::string key) {  
     Node *p = new Node();  
