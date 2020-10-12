@@ -36,103 +36,50 @@ void push(Node** head_ref, std::string new_data)  {
     // Apunta head a nuevo nodo
     (*head_ref) = new_node;  
 }  
-
-// Crea y devuelve nuevo nodo de LDL 
-struct Node* getNode(std::string data) { 
-    // Ubica Nodo
-    struct Node* newNode =  
-        (struct Node*)malloc(sizeof(struct Node)); 
-    // Inserta dato
-    newNode->data = data; 
-    newNode->prev = newNode->next = NULL; 
-    return newNode; 
-} 
   
-// Inserta nuevo nodo de forma ordenada en LDL
-void insercionOrdenada(struct Node** head_ref, struct Node* newNode) { 
-    struct Node* current; 
-    // Si LDL esta vacía
-    if (*head_ref == NULL) 
-        *head_ref = newNode; 
-    // Agregar al principio de la lista
-    else if ((*head_ref)->data >= newNode->data) { 
-        newNode->next = *head_ref; 
-        newNode->next->prev = newNode; 
-        *head_ref = newNode; 
-    } else { 
-        current = *head_ref; 
-        // Ubicar nodo previo al nodo que debe ser insertado
-        while (current->next != NULL &&  
-               current->next->data < newNode->data) 
-            current = current->next; 
-        // Crear vínculo
-        newNode->next = current->next; 
-        // Si nodo no es insertado el final
-        if (current->next != NULL) 
-            newNode->next->prev = newNode; 
-        current->next = newNode; 
-        newNode->prev = current; 
-    } 
-} 
 
 // Function to insetail new node  
-void nodeInsetail(Node **head, Node **tail, std::string key)  
-{  
-  
+void insercionOrdenada(Node **head, Node **tail, std::string key) {  
     Node *p = new Node();  
     p->data = key;  
     p->next = NULL;  
-  
-    // If first node to be insetailed in doubly  
-    // linked list  
-    if ((*head) == NULL)  
-    {  
+    // 1er Nodo insertado en LDL
+    if ((*head) == NULL)  {  
         (*head) = p;  
         (*tail) = p;  
         (*head)->prev = NULL;  
         return;  
     }  
-  
-    // If node to be insetailed has value less  
-    // than first node  
-    if ((p->data) < ((*head)->data))  
-    {  
+    // Si nuevo nodo tiene valor menor
+    if ((p->data) < ((*head)->data))  {  
         p->prev = NULL;  
         (*head)->prev = p;  
         p->next = (*head);  
         (*head) = p;  
         return;  
     }  
-  
-    // If node to be insetailed has value more  
-    // than last node  
-    if ((p->data) > ((*tail)->data))  
-    {  
+    // Si nuevo noto tiene valor mayor
+    if ((p->data) > ((*tail)->data))  {  
         p->prev = (*tail);  
         (*tail)->next = p;  
         (*tail) = p;  
         return;  
     }  
-  
-    // Find the node before which we need to  
-    // insert p.  
+    // Encontrar nodo previo a p
     Node *temp = (*head)->next;  
     while ((temp->data) < (p->data))  
         temp = temp->next;  
-  
-    // Insert new node before temp  
+    // Insertar nuevo nodo antes de p
     (temp->prev)->next = p;  
     p->prev = temp->prev;  
     temp->prev = p;  
     p->next = temp;  
 }  
-  
+
 // Función para imprimir la LDL
-void printList(Node *temp)  
-{  
-    while (temp != NULL)  
-    {  
-        std::cout << temp->data << " ";  
+void printList(Node *temp) {  
+    while (temp != NULL)  {  
+        std::cout << temp->data << "\n";  
         temp = temp->next;  
     }  
 }  
@@ -151,7 +98,7 @@ std::string mesTextoANro(const std::string& mes) {
 }
 
 // Solicitud a usuario de rango de IPs para realizar la búsqueda
-void ipsFiltro(struct Node* head){
+void ipsFiltro(Node *head){
     std::string ip1, ip2;
     std::cout << "\nEsta base contiene 16,806 registros de intentos fallidos de ingreso al sistema desde 01-Jun hasta 30-Oct y que detalla IPs y puertos origen de requests.\n";
     std::cout << "\nPara realizar una búsqueda, por favor ingrese el rango de IPs deseado en formato 0.0.0.0:0000\n";
@@ -165,10 +112,12 @@ void ipsFiltro(struct Node* head){
     resultadosBusqueda.open ("output/resultados" + ip1 + "a" + ip2 + ".csv");
     resultadosBusqueda << "ipAddress,dateTime,errorMessage\n";
     while (head != NULL) { 
-        resultadosBusqueda << head->data << "\n";
-        std::cout << head->data << "\n";
-        head = head->next; 
+        if (head->data > ip1 && head->data < ip2 + "z") {
+            resultadosBusqueda << head->data << "\n"; // Graba en archivo CSV
+            std::cout << head->data << "\n"; // Imprime en la consola
+        }        
     } 
+    resultadosBusqueda.close();
     // Mensaje de Confirmación
     std::cout << "\nLos resultados de su búsqueda han sido almacenados en la carpeta output (formato CSV). \n";
 }
@@ -176,9 +125,10 @@ void ipsFiltro(struct Node* head){
 int main() {
     Node *head = NULL, *right = NULL;
     std::string line;
-    std::ofstream bitacoraOrdenada;
+    // std::ofstream bitacoraOrdenada;
+
     // Archivo a grabar con datos ordenados
-    bitacoraOrdenada.open ("output/bitacora_AZ.csv");
+    // bitacoraOrdenada.open ("output/bitacora_AZ.csv");
     // Vector de Strings para almacenar lectura de archivo
 
     // Ciclo while que lee línea por línea hasta llegar al final
@@ -198,19 +148,17 @@ int main() {
         }
         std::string cleanedLine;
         cleanedLine.append(ip).append(",").append(datetime).append(",").append(message);
-
-        // struct Node* new_node = getNode(cleanedLine);
-        nodeInsetail(&head, &right, cleanedLine);
+        insercionOrdenada(&head, &right, cleanedLine);
     };
 
-    printList(head);
+    // printList(head);
 
-    bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
-    while (head != NULL) { 
-        bitacoraOrdenada << head->data << "\n"; 
-        head = head->next; 
-    } 
-    bitacoraOrdenada.close();
+    // bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
+    // while (head != NULL) {  
+    //     bitacoraOrdenada << head->data << "\n";  
+    //     head = head->next;  
+    // }  
+    // bitacoraOrdenada.close();
 
     // Variables y función para búsqueda
     ipsFiltro(head);
