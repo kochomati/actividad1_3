@@ -77,11 +77,16 @@ void insercionOrdenada(Node **head, Node **tail, std::string key) {
 }  
 
 // Función para imprimir la LDL
-void printList(Node *temp) {  
-    while (temp != NULL)  {  
-        std::cout << temp->data << "\n";  
-        temp = temp->next;  
+void ipsOrdenados(Node *head) {  
+    std::ofstream bitacoraOrdenada;
+    bitacoraOrdenada.open ("output/bitacora_AZ.csv");
+    bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
+    while (head != NULL) {  
+        bitacoraOrdenada << head->data << "\n";  
+        head = head->next;  
     }  
+    bitacoraOrdenada.close();
+
 }  
 
 // Archivo de ingreso raw - mismo archivo que Act. 1.3 - @TODO: ver de usar mismo orígen
@@ -112,10 +117,11 @@ void ipsFiltro(Node *head){
     resultadosBusqueda.open ("output/resultados" + ip1 + "a" + ip2 + ".csv");
     resultadosBusqueda << "ipAddress,dateTime,errorMessage\n";
     while (head != NULL) { 
-        if (head->data > ip1 && head->data < ip2 + "z") {
+        if (head->data > ip1 && head->data < ip2) {
             resultadosBusqueda << head->data << "\n"; // Graba en archivo CSV
             std::cout << head->data << "\n"; // Imprime en la consola
-        }        
+        }    
+        head = head->next;     
     } 
     resultadosBusqueda.close();
     // Mensaje de Confirmación
@@ -125,12 +131,6 @@ void ipsFiltro(Node *head){
 int main() {
     Node *head = NULL, *right = NULL;
     std::string line;
-    // std::ofstream bitacoraOrdenada;
-
-    // Archivo a grabar con datos ordenados
-    // bitacoraOrdenada.open ("output/bitacora_AZ.csv");
-    // Vector de Strings para almacenar lectura de archivo
-
     // Ciclo while que lee línea por línea hasta llegar al final
     while (std::getline(bitacora, line)){
         std::istringstream iss(line);
@@ -151,15 +151,8 @@ int main() {
         insercionOrdenada(&head, &right, cleanedLine);
     };
 
-    // printList(head);
-
-    // bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
-    // while (head != NULL) {  
-    //     bitacoraOrdenada << head->data << "\n";  
-    //     head = head->next;  
-    // }  
-    // bitacoraOrdenada.close();
-
+    // Exportar Lista Ordenada por IP
+    ipsOrdenados(head);
     // Variables y función para búsqueda
     ipsFiltro(head);
 
