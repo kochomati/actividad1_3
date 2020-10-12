@@ -15,7 +15,7 @@ Creación: Sábado, 10 de Octubre
 #include <fstream>
 #include <iterator>
 
-// Nodo de una lista doblemente ligada
+// Nodo de una lista doblemente ligada (LDL)
 struct Node { 
     int data; 
     struct Node* prev, *next; 
@@ -37,68 +37,51 @@ void push(Node** head_ref, int new_data)  {
     (*head_ref) = new_node;  
 }  
 
-// Inserta nuevo nodo después de nodo dado como prev_node
-void insertAfter(Node* prev_node, int new_data)  {  
-    // Verifica si prev_node es null
-    if (prev_node == NULL)  {  
-        cout<<"Nodo previo no puede ser null.";  
-        return;  
-    }  
-    // Ubica nuevo nodo
-    Node* new_node = new Node(); 
-    // Insertar data
-    new_node->data = new_data;  
-    // Hacer next de nuevo nodo el next de prev_node
-    new_node->next = prev_node->next;   
-    // Hacer nuevo nodo el next de prev_node
-    prev_node->next = new_node;
-    // Hacer previous el prev_node de new_node
-    new_node->prev = prev_node;  
-    // Cambiar el prev del nodo después del new_node
-    if (new_node->next != NULL)  
-        new_node->next->prev = new_node;  
-}  
-
-// Agrega nuevo nodo al final dado referencia de head y un int
-void append(Node** head_ref, int new_data)  {
-    // Ubicar Nodo
-    Node* new_node = new Node();  
-    Node* last = *head_ref; /* used in step 5*/
-    // Insertar Data
-    new_node->data = new_data;  
-    // Nuevo nodo va a ser el último
-    new_node->next = NULL;  
-    // Si la lista esta vacía, el nuevo nodo debe se el head
-    if (*head_ref == NULL) {  
-        new_node->prev = NULL;  
-        *head_ref = new_node;  
-        return;  
-    }  
-    // Iterar hasta llegar al último nodo
-    while (last->next != NULL)  
-        last = last->next;  
-    // Cambiar el next del último nodo
-    last->next = new_node;  
-    // Último nodo previous del nuevo nodo
-    new_node->prev = last;  
-    return;  
-}  
-
-// Impresión de contenidos de lista doblemente ligada
-void printList(Node* node) {  
-    Node* last;  
-    cout<<"\nTraversal in forward direction \n";  
-    while (node != NULL) {  
-        cout<<" "<<node->data<<" ";  
-        last = node;  
-        node = node->next;  
-    }
-    cout<<"\nTraversal in reverse direction \n";  
-    while (last != NULL) {  
-        cout<<" "<<last->data<<" ";  
-        last = last->prev;  
-    }
-}
+// Crea y devuelve nuevo nodo de LDL 
+struct Node* getNode(int data) { 
+    // Ubica Nodo
+    struct Node* newNode =  
+        (struct Node*)malloc(sizeof(struct Node)); 
+    // Inserta dato
+    newNode->data = data; 
+    newNode->prev = newNode->next = NULL; 
+    return newNode; 
+} 
+  
+// Inserta nuevo nodo de forma ordenada en LDL
+void sortedInsert(struct Node** head_ref, struct Node* newNode) { 
+    struct Node* current; 
+    // Si LDL esta vacía
+    if (*head_ref == NULL) 
+        *head_ref = newNode; 
+    // Agregar al principio de la lista
+    else if ((*head_ref)->data >= newNode->data) { 
+        newNode->next = *head_ref; 
+        newNode->next->prev = newNode; 
+        *head_ref = newNode; 
+    } else { 
+        current = *head_ref; 
+        // Ubicar nodo previo al nodo que debe ser insertado
+        while (current->next != NULL &&  
+               current->next->data < newNode->data) 
+            current = current->next; 
+        // Crear vínculo
+        newNode->next = current->next; 
+        // Si nodo no es insertado el final
+        if (current->next != NULL) 
+            newNode->next->prev = newNode; 
+        current->next = newNode; 
+        newNode->prev = current; 
+    } 
+} 
+  
+// Función para imprimir la LDL
+void printList(struct Node* head) { 
+    while (head != NULL) { 
+        std::cout << head->data << " "; 
+        head = head->next; 
+    } 
+} 
 
 // Archivo de ingreso raw - mismo archivo que Act. 1.3 - @TODO: ver de usar mismo orígen
 std::ifstream bitacora("input/bitacora.txt");
@@ -153,7 +136,7 @@ void fechasFiltro(std::vector<std::string> listaVector){
     // Creación de archivo y grabado de resultados en carpeta output
     std::ofstream resultadosBusqueda;
     resultadosBusqueda.open ("output/resultados" + ip1 + "a" + ip2 + ".csv");
-    resultadosBusqueda << "dateTime,ipAddress,errorMessage\n";
+    resultadosBusqueda << "ipAddress,dateTime,errorMessage\n";
     for(int a = 0; a < listaVector.size(); a++){
         if (listaVector[a] > ip1 && listaVector[a] < ip2 + "z") {
             resultadosBusqueda << listaVector[a] << "\n"; // Graba en archivo CSV
@@ -165,6 +148,7 @@ void fechasFiltro(std::vector<std::string> listaVector){
 }
 
 int main() {
+    struct Node* head = NULL;
     std::string line;
     std::ofstream bitacoraOrdenada;
     // Archivo a grabar con datos ordenados
@@ -187,13 +171,14 @@ int main() {
             message.append(vstrings[i]).append(" ");
         }
         std::string cleanedLine;
-        cleanedLine.append(datetime).append(",").append(ip).append(",").append(message);
+        cleanedLine.append(ip).append(",").append(datetime).append(",").append(message);
+        // struct Node* new_node = getNode(cleanedLine);
         bitacoraVector.push_back(cleanedLine);
     };
     // Llamado función recursiva de ordenamiento
     quickSort(bitacoraVector, 0, bitacoraVector.size()-1);
     // Grabado de bitacora ordenada por fecha y hora a archivo CSV
-    bitacoraOrdenada << "dateTime,ipAddress,errorMessage\n";
+    bitacoraOrdenada << "ipAddress,dateTime,errorMessage\n";
     for(int b = 0; b < bitacoraVector.size(); b++){
         bitacoraOrdenada << bitacoraVector[b] << "\n";
     };
