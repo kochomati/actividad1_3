@@ -1,4 +1,4 @@
-# Evidencia Competencia - Actividad Integral 1.1 #
+# Actividad 1.1 #
 > Funciones Iterativas, Recursivas y su análisis de Complejidad
 
 ### Tareas ###
