@@ -1,6 +1,5 @@
 # Evidencia Competencia - Actividad Integral 2.3 #
 > Estructura de Datos Lineales
-
 ### Tareas ###
 1. Abra el archivo de entrada llamado "bitacora.txtVista previa del documento" lealo y almacene los datos en una lista doblemente ligada.
 2. Ordene la información por IP para la realización de las búsquedas.
@@ -14,7 +13,6 @@
 > SICT0302B - Toma decisiones en la solución de problemas en condiciones de incertidumbre y diferentes niveles de complejidad con base metodologías de investigación y de cómputo.
 > SICT0303B - Implementa acciones científicas e ingenieriles o procesos computacionales que cumplen con el tipo de solución requerida.
 > SEG0702A - Tecnologías de Vanguardia. Evalúa diversas tecnologías con apertura a la búsqueda e implementación de alternativas relevantes en la transformación de la práctica profesional.
-
 ### Estuctura de Archivos ###
 - main.cpp
 - input
@@ -25,7 +23,6 @@
 - README.md
 - reflexiones
     - actividad2_3.pdf
-    
 ### Compilación y Ejecución ###
 * Descargar repositorio
 * Realizar compilación: macOS + Linux
